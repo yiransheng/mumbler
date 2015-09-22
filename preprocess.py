@@ -4,7 +4,23 @@ import pybloom
 from contextlib import nested, closing
 from collections import Counter
 
-from node import GPFSNode, local_node
+
+import node_manager
+
+def process_all():
+    index_offset = node_manager.local_node.index_offset
+    nnodes = node_manager.local_node.count()
+    for index in range(index_offset, 100, nnodes):
+        filename = "gram2_" + str(index)
+        zip_file = os.path.join(node_manager.GPFSNodeManager.local_storage,
+                                filename + ".csv.zip")
+        if os.path.isfile(zip_file) and not os.path.isfile(out_file):
+            out_file = os.path.join(node_manager.GPFSNodeManager.gpfs_storage, filename + ".processed")
+            process_zip(zip_file, out_file)
+        elif not os.path.isfile(zip_file):
+            print("Need to download the zip file first.")
+        else:
+            print("Already processed.")
 
 def process_zip(infile, outfile):
     '''
@@ -134,7 +150,8 @@ def produce_parent_word_block(word, counter, sep="\t"):
         child_line = child_word + sep + str(counter[child_word])
         yield child_line
 
+if name == "__main__":
+    process_all()
 
 
-process_zip("sample.csv.zip", "test_sample.poorman")
 
