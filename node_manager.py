@@ -6,7 +6,7 @@ import os.path
 class GPFSNodeManager(object):
 
     local_name = socket.gethostname().split('.')[0]
-    local_storage = "/tmp/2gram"
+    local_storage = "/root/tmp/2gram"
     gpfs_storage = "/gpfs/gpfsfpo"
 
     def __init__(self, node_file="/root/nodefile"):
@@ -24,7 +24,7 @@ class GPFSNodeManager(object):
 
             self.index_offset = self._nodes.index(GPFSNodeManager.local_name)
         else:
-            self._nodes.append(GPFSNode.local_name)
+            self._nodes.append(GPFSNodeManager.local_name)
             self.index_offset = 0
 
     def nodes(self):
@@ -43,5 +43,5 @@ class GPFSNodeManager(object):
     def local():
         return GPFSNode.local_name
 
-local_node = GPFSNode()
+local_node = GPFSNodeManager()
 
