@@ -2,18 +2,16 @@ import os
 import sys
 import urllib2
 
-import node_manager
+from nodeconfig import localnode,LOCAL_STORAGE,GPFS_STORAGE
 
 goog_url = "http://storage.googleapis.com/books/ngrams/books/googlebooks-eng-all-2gram-20090715-%s.csv.zip"
 
 
 def download_all(force=False):
-    index_offset = node_manager.local_node.index_offset
-    nnodes = node_manager.local_node.count()
-    for i in range(index_offset, 100, nnodes):
+    for i in localnode.indices():
         download_2gram_by_index(i, force=force)
 
-def download_2gram_by_index(index, dest=node_manager.GPFSNodeManager.local_storage, force=False):
+def download_2gram_by_index(index, dest=LOCAL_STORAGE, force=False):
     dest_zip_file = os.path.join(dest, "gram2_" + str(index) + ".csv.zip")
     url = goog_url % str(index)
     if force or not os.path.isfile(dest_zip_file):

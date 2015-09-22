@@ -5,16 +5,14 @@ from contextlib import nested, closing
 from collections import Counter
 
 
-import node_manager
+from nodeconfig import localnode,LOCAL_STORAGE,GPFS_STORAGE
 
 def process_all():
-    index_offset = node_manager.local_node.index_offset
-    nnodes = node_manager.local_node.count()
-    for index in range(index_offset, 100, nnodes):
+    for index in localnode.indices():
         filename = "gram2_" + str(index)
-        zip_file = os.path.join(node_manager.GPFSNodeManager.local_storage,
+        zip_file = os.path.join(LOCAL_STORAGE,
                                 filename + ".csv.zip")
-        out_file = os.path.join(node_manager.GPFSNodeManager.gpfs_storage, filename + ".processed")
+        out_file = os.path.join(GPFS_STORAGE, filename + ".processed")
         if os.path.isfile(zip_file) and not os.path.isfile(out_file):
             process_zip(zip_file, out_file)
         elif not os.path.isfile(zip_file):
