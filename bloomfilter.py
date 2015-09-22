@@ -37,7 +37,17 @@ def create_filter(datafile, force=False):
 
 if __name__ == '__main__':
     force = False
+    index = -1
     if len(sys.argv) >= 2:
         force = sys.argv[1] == "--force" or sys.argv[1] == "-f"
-    create_filter_all(force)
+    if len(sys.argv) >= 3:
+        index = int(sys.argv[2])
+
+    if index == -1:
+        create_filter_all(force)
+    else:
+        creat_filter(
+            os.path.join(GPFS_STORAGE,
+                localnode.filenames()[index] + ".processed"),
+            True)
 
