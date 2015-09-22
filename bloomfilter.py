@@ -3,6 +3,13 @@ import os
 from pybloom import BloomFilter
 
 from parse import parse_parent_line, is_parent_line
+from nodeconfig import localnode, GPFS_STORAGE
+
+
+def create_filter_all(force=False):
+    for filename in localnode.filenames():
+        datafile = os.path.join(GPFS_STORAGE, filename + ".processed")
+        create_filter(datafile, force)
 
 def create_filter(datafile, force=False):
     assert os.path.isfile(datafile)
@@ -27,9 +34,9 @@ def create_filter(datafile, force=False):
 
         print("%s done." % filter_file)
 
-create_filter("test.tsv")
+if __name__ == '__main__':
+    force = False
+    if len(sys.argv) >= 2:
+        force = sys.argv[1] == "--force" or sys.argv[1] == "-f"
+    create_filter_all(force)
 
-with open("test.tsv.filter", 'r') as ff:
-    bf = BloomFilter.fromfile(ff)
-print("world" in bf)
-print("fincial" in bf)
