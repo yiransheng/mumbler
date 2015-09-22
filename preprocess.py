@@ -1,5 +1,4 @@
 import zipfile
-import pybloom
 
 from contextlib import nested, closing
 from collections import Counter
@@ -150,7 +149,7 @@ def produce_parent_word_block(word, counter, sep="\t"):
         child_line = child_word + sep + str(counter[child_word])
         yield child_line
 
-if name == "__main__":
+if __name__ == "__main__":
     process_all()
 
 
