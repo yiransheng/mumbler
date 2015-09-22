@@ -1,0 +1,6 @@
+*.pyc
+*.tsv
+*.zip
+*.csv
+*.filter
+*.*~

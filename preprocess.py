@@ -4,6 +4,7 @@ import pybloom
 from contextlib import nested, closing
 from collections import Counter
 
+from node import GPFSNode, local_node
 
 def process_zip(infile, outfile):
     '''
