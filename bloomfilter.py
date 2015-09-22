@@ -23,7 +23,7 @@ def create_filter(datafile, force=False):
             try:
                 while True:
                     if is_parent_line(line):
-                        word, skips = parse_parent_line(line)
+                        word, skips, _ = parse_parent_line(line)
                         bf.add(word)
                         for i in xrange(1, skips):
                             next(df)
