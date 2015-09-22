@@ -14,8 +14,8 @@ def process_all():
         filename = "gram2_" + str(index)
         zip_file = os.path.join(node_manager.GPFSNodeManager.local_storage,
                                 filename + ".csv.zip")
+        out_file = os.path.join(node_manager.GPFSNodeManager.gpfs_storage, filename + ".processed")
         if os.path.isfile(zip_file) and not os.path.isfile(out_file):
-            out_file = os.path.join(node_manager.GPFSNodeManager.gpfs_storage, filename + ".processed")
             process_zip(zip_file, out_file)
         elif not os.path.isfile(zip_file):
             print("Need to download the zip file first.")
