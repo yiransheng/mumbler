@@ -11,7 +11,7 @@ filters = []
 for i in xrange(0, 100):
     filter_file = os.path.join(nodeconfig.GPFS_STORAGE,
         "gram2_" + str(i) + ".processed.filter")
-    with open(filter_file, 'w') as f:
+    with open(filter_file, 'r') as f:
         filters.append(BloomFilter.fromfile(f))
 
 def search_next(word):
