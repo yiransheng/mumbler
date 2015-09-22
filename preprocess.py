@@ -26,12 +26,15 @@ def process_zip(infile, outfile):
     '''
     Takes a single zip file, and outputs processed ngram data file for use later
     a block for a single parent word in outfile looks like:
-    # [parent_word] TAB <number of child_words> TAB <total counts across all years for all child words>
+    # -[parent_word]- TAB <number of child_words> TAB <total counts across all years for all child words>
     -[financial]- 2 11
     analysis 6
     straits 5
 
     lines are spit out one at a time
+    (it was designed this way as mine local machine does not have enouch RAM to load the whole unzipped
+     files, however, in vses, RAM was not a issue, probably better off just load the wrong thing ~2GB
+     rather than wasting time on small reads)
 
     parts on each line are seperated by "\t"
     we store the number of childwords (lines in the following block in the anchor line,

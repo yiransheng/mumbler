@@ -2,18 +2,7 @@ import os
 
 from pybloom import BloomFilter
 
-def parse_parent_line(line):
-    tokens = line.split("\t")
-    if len(tokens) == 3:
-        word_token = tokens[0]
-        child_count = int(tokens[1])
-        l = len(word_token)
-        word = word_token[2:l-2] \
-                .replace("\\-\\[", "-[").replace("\\]\\-", "]-")
-        return word, child_count
-
-def is_parent_line(line):
-    return len(line)>0 and line.startswith("-[")
+from parse import parse_parent_line, is_parent_line
 
 def create_filter(datafile, force=False):
     assert os.path.isfile(datafile)
