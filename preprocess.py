@@ -1,3 +1,4 @@
+import os
 import zipfile
 
 from contextlib import nested, closing
