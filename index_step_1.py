@@ -11,7 +11,7 @@ from binindex import IndexEntry
 
 
 def index_all():
-    index_file = os.path.join(GPFS_STORAGE, local_node.name + "_index")
+    index_file = os.path.join(GPFS_STORAGE, localnode.name + "_index")
     writer = open(index_file)
     for i in localnode.indices():
         print("Indexing file: gram2_%s.processed" % str(i))
