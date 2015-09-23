@@ -27,7 +27,7 @@ def build_master_index(where):
     print("done")
 
 if __name__ == "__main__":
-    build_master_index(os.join(GPFS_STORAGE, "gram2_index"))
+    build_master_index(os.path.join(GPFS_STORAGE, "gram2_index"))
 
 
 
