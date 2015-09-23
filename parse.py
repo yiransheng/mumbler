@@ -15,12 +15,12 @@ def extract_next_words(word, datafile):
                 if is_parent_line(line):
                     current_word, nchildren, counts = parse_parent_line(line)
                     if word == current_word:
-                        for i in xrange(1, nchildren):
+                        for i in xrange(0, nchildren):
                             child_word, count = parse_child_line(next(df))
                             words[child_word] = count
                         break
                     else:
-                        for i in xrange(1, nchildren):
+                        for i in xrange(0, nchildren):
                             next(df)
                 line = next(df)
         except StopIteration:
