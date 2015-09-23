@@ -56,7 +56,6 @@ def load_hash32(hash32, words_index):
         if word is None:
             continue
         child_words, counts = extract_next_words_fast(word, index, starting_pos, chunk_size)
-        print(child_words.keys())
         if word in data:
             data[word]["counts"] += counts
             merge_counters(data[word]["children"], child_words)
@@ -155,7 +154,10 @@ def extract_parent_word(index, starting, chunk_size):
 def merge_counters(counter1, counter2):
     for word in counter2:
         if counter2[word] > 0:
-            counter1[word] += counter2[word]
+            if word not in counter1:
+                counter1[word] = counter2[word]
+            else:
+                counter1[word] += counter2[word]
 
     return counter1
 
