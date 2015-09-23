@@ -21,7 +21,7 @@ def search_next(word):
         if word in filters[i]:
             data_file = os.path.join(nodeconfig.GPFS_STORAGE,
                 "gram2_" + str(i) + ".processed")
-            words, count = extract_next_words(data_file)
+            words, count = extract_next_words(word, data_file)
             for w in words:
                 counter[w] += words[w]
             next_words_count += count
