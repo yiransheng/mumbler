@@ -22,7 +22,7 @@ def build_master_index(where):
                  index_entry.chunk_size)
             )
 
-    with open(where, ''w) as w:
+    with open(where, 'w') as w:
         pickle.dump(master_index, w)
     print("done")
 
