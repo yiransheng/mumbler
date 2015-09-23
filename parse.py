@@ -18,8 +18,9 @@ def extract_next_words_fast(word, dataindex, starting, chunk_size):
     parent_word, _, counts = parse_parent_line(lines[0])
     if counts > 0 and parent_word == word:
         for line in lines[1:]:
-            child_word, count = parse_child_line(line)
-            words[child_word] = count
+            if line != '':
+                child_word, count = parse_child_line(line)
+                words[child_word] = count
 
     return words, counts
 
