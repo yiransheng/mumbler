@@ -17,7 +17,7 @@ def mumbler(word, depth):
 
 
 def sample(words, total_count):
-    threshold = random.randomint(0, total_count-1)
+    threshold = random.randint(0, total_count-1)
     index = 0
     for (word, count) in words.iteritems():
         index += count

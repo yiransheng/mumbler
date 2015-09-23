@@ -7,12 +7,15 @@ import nodeconfig
 from pybloom import BloomFilter
 from parse import extract_next_words
 
+print("Loading bloomfilters into RAM...")
 filters = []
 for i in xrange(0, 100):
     filter_file = os.path.join(nodeconfig.GPFS_STORAGE,
         "gram2_" + str(i) + ".processed.filter")
     with open(filter_file, 'r') as f:
         filters.append(BloomFilter.fromfile(f))
+
+print("done")
 
 def search_next(word):
     counter = Counter()
