@@ -13,7 +13,7 @@ def json_deserializer(key, value, flags):
         return json.loads(value)
     raise Exception("Unknown serialization format")
 
-client = Client(('localhost', 11211), serializer=json_serializer,
+memcached = Client(('localhost', 11211), serializer=json_serializer,
                 deserializer=json_deserializer)
 
 
