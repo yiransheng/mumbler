@@ -11,6 +11,13 @@ For example:
 master of the members and many times . The problem
 ```
 
+Note, this program relies on memcahed to be running, incase it is down, the following slow version is also avaiable:
+```
+./mumbler.py <word> <depth> --slow
+```
+
+Although the "fast" version is really not that fast :(  
+
 ## Design
 
 ### Preprocess
