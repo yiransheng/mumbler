@@ -29,5 +29,23 @@ Each data file ended up being about 16MB, and there are exactly 100 of them.
 
 ### Speeding up attempt 1
 
-Initially, I had the wrong 
+Initially, I had the wrong assumption about input files. I had thought for a given word, say "hello", its data will only be stored in a small subset of all files (for instance, only file 2,10,40 contains the word out of all 100). However, soon enough I discovered this is not the case. 
+
+With this wrong assumption, I had pre-generated a boomfilter file for each processed file, with the idea being, at runtime we can simply load the bloomfilter into memory, and efficiently check if a given file contains the word we are interested in and only examine the files tha do contain it. 
+
+It turns out, a lot of words are contained by all 100 files! And mumbler runtime performance was abysmal - as we had to read all 100 files to look up the next words at each single step!
+
+### Speeding up attempt 2
+
+So I gave up on the bloomfilter idea and instead focused on building a index that maps a given parent word to its byte location in all 100 files. 
+
+The idea was given a parent word, we have a pre-built index that stores up to 100 integers  which serve as pointers for where to find its data in all processed data files. In addition, each parent word stores another number per data file which is a byte count for all its data. The data for a given file can be loaded more efficiently, for example:
+```
+...
+file.seek(starting_position)
+file.read(chunk_size)
+...
+```
+
+The appoach improved the runtime performance quite a bit, the mumbler now runs within minutes. 
 
