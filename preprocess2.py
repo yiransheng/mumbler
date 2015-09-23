@@ -19,6 +19,7 @@ def process():
     nnodes = len( localnode.nodes() )
     words_index = build_master_index()
     n = -1
+    print("Processing hash by hash...")
     for hash32 in words_index:
         n += 1
         if n % nnode != offset:
@@ -28,9 +29,12 @@ def process():
         if len(data) == 0:
             continue
         first_word = data.iterkeys().next()
+        print("Handling word %s" % first_word)
         hash16 = hashutils.hashword16(first_word)
         tail_word, tail_file, data, has_space = write_data_main(hash16, data)
+        print("Wrote into file up to %s" % tail_file)
         if has_space:
+            print("we have space add more stuff")
             next_words = search_next(tail_word, words_index)
             write_data_residuals(tail_file, next_words, words_index):
 
