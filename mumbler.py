@@ -3,7 +3,7 @@ import random
 
 import search
 from index_step_2 import build_master_index
-from memcahce import memcached
+from memcache import memcached
 
 words_index = build_master_index()
 
