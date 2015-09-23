@@ -1,11 +1,12 @@
 import os
 
 import pickle
+from memcache import memcached
 
 from binindex import IndexEntry
 from nodeconfig import localnode, GPFS_STORAGE
 
-def build_master_index(where):
+def build_master_index(cache=False):
     master_index = dict()
     size = IndexEntry.size()
     for node in localnode.nodes():
@@ -20,21 +21,18 @@ def build_master_index(where):
                 if index_entry.id not in master_index:
                     master_index[index_entry.id] = []
 
-                master_index[index_entry.id].append(
-                    (index_entry.index,
+                index_content = (index_entry.index,
                      index_entry.offset,
                      index_entry.chunk_size)
-                )
-
-    print("writing index file to disk")
-    w = open(where, 'w')
-    pickle.dump(master_index, w)
-    w.close()
+                master_index[index_entry.id].append(index_content)
+                if cache:
+                    memcached.set(index_entry.id, index_content)
 
     print("done")
+    return master_index
 
 if __name__ == "__main__":
-    build_master_index(os.path.join(GPFS_STORAGE, "gram2_index"))
+    build_master_index(cache=True)
 
 
 

@@ -1,6 +1,27 @@
 import os
 from collections import Counter
 
+
+def extract_next_words_fast(word, dataindex, starting, chunk_size):
+    datafile = "gram2_%s.processed" % str(dataindex)
+    with open(datafile, 'r') as df:
+        df.seek(starting)
+        lines = df.read(chunk_size).split("\n")
+
+    words = Counter()
+    counts = 0
+    if not is_parent_line(lines[0]):
+        return words, counts
+
+    parent_word, _, counts = parse_parent_line(lines[0])
+    if counts > 0 and parent_word == word:
+        for line in lines[1:]:
+            child_word, count = parse_child_line(line)
+            words[child_word] = count
+
+    return words, counts
+
+
 def extract_next_words(word, datafile):
     assert os.path.isfile(datafile)
     words = Counter()
