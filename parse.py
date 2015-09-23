@@ -1,9 +1,10 @@
 import os
 from collections import Counter
+from nodeconfig import GPFS_STORAGE
 
 
 def extract_next_words_fast(word, dataindex, starting, chunk_size):
-    datafile = "gram2_%s.processed" % str(dataindex)
+    datafile = os.path.join(GPFS_SOTRAGE, "gram2_%s.processed" % str(dataindex))
     with open(datafile, 'r') as df:
         df.seek(starting)
         lines = df.read(chunk_size).split("\n")
