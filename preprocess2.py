@@ -131,7 +131,7 @@ def merge_counters(counter1, counter2):
 
     return counter1
 
-if __name__ == "main":
+if __name__ == "__main__":
     process()
 
 
