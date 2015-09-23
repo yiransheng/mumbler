@@ -48,5 +48,5 @@ def index_processed_file(index, writer):
 
             line = f.readline()
 
-if __name__ == "main":
+if __name__ == "__main__":
     index_all()
