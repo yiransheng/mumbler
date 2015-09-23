@@ -46,7 +46,7 @@ if __name__ == '__main__':
     if index == -1:
         create_filter_all(force)
     else:
-        creat_filter(
+        create_filter(
             os.path.join(GPFS_STORAGE,
                 localnode.filenames()[index] + ".processed"),
             True)
