@@ -28,7 +28,7 @@ def search_next(word, words_index):
     word_id = int(word_hash, 16) % 4294967296 # 2**32
 
     # is an list of tuples: (index, starting_pos, chunk_size)
-    word_locs = words_index.get(word_id)
+    word_locs = words_index.get(str(word_id))
     for index, starting_pos, chunk_size in word_locs:
         words, count = extract_next_words_fast(word, index, starting_pos, chunk_size)
         for w in words:

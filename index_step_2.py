@@ -26,7 +26,7 @@ def build_master_index(cache=False):
                      index_entry.chunk_size)
                 master_index[index_entry.id].append(index_content)
                 if cache:
-                    memcached.set(index_entry.id, index_content)
+                    memcached.set(str(index_entry.id), index_content)
 
     print("done")
     return master_index

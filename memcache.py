@@ -3,6 +3,7 @@ import json
 from pymemcache.client.base import Client
 
 def json_serializer(key, value):
+     key = str(key)
      if type(value) == str:
          return value, 1
      return json.dumps(value), 2
