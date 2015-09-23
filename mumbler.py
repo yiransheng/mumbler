@@ -44,7 +44,7 @@ if __name__ == '__main__':
             usage(sys.argv[0])
             sys.exit(1)
         words_index = memcached
-        if len(sys.argv) >= 4 && sys.argv[3] == "--slow":
+        if len(sys.argv) >= 4 and sys.argv[3] == "--slow":
             print('Loading index files from disk, this takes a while...')
             words_index = build_master_index()
     else:
