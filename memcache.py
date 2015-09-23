@@ -4,7 +4,7 @@ from pymemcache.client.base import Client
 def json_serializer(key, value):
     if type(value) == str:
         return value, 1
-     return json.dumps(value), 2
+    return json.dumps(value), 2
 
 def json_deserializer(key, value, flags):
     if flags == 1:
