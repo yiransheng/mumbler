@@ -26,10 +26,13 @@ def build_master_index(cache=False):
                      index_entry.offset,
                      index_entry.chunk_size)
                 master_index[strid].append(index_content)
-                if cache:
-                    memcached.set(strid, index_content)
 
-    print("done")
+    print("finished loading index")
+    if cache:
+        print("putting it to memcache")
+        for key in master_index:
+            memcached.set(key, master_index[key])
+        print("done")
     return master_index
 
 if __name__ == "__main__":
