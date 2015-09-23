@@ -48,6 +48,6 @@ if __name__ == '__main__':
     else:
         create_filter(
             os.path.join(GPFS_STORAGE,
-                localnode.filenames()[index] + ".processed"),
+                "gram2_" + str(index) + ".processed"),
             True)
 
