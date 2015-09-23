@@ -40,12 +40,14 @@ def process():
 
 
 def load_hash32(hash32, words_index):
-    if isinstance(hash32, int):
+    if not isinstance(hash32, str):
         hash32 = str(hash32)
 
     locs = words_index.get(hash32)
 
     data = dict()
+    if locs is None:
+        return data
     for index, starting_pos, chunk_size in locs:
         word = extract_parent_word(index, starting_pos, chunk_size)
         if word is None:
@@ -67,7 +69,13 @@ def write_data_main(filename, data):
                            base_dir,
                            filename + "." + str(file_index))
 
-    w = open(outfile, 'w')
+    while True:
+        try:
+            w = open(outfile, 'a')
+            break
+        except IOError, e:
+            print e.errno
+            time.sleep(2)
     for word in data:
         # SPACE word TAB counts NEW_LINE
         w.write(" %s\t%s\n" % (word, str(data[word]["counts"])))
@@ -83,7 +91,13 @@ def write_data_main(filename, data):
             outfile = os.path.join(GPFS_STORAGE,
                                    base_dir,
                                    filename + "." + str(file_index))
-            w = open(outfile, 'w')
+            while True:
+                try:
+                    w = open(outfile, 'a')
+                    break
+                except IOError, e:
+                    print e.errno
+                    time.sleep(2)
 
     # file is not full, we can write some more stuff in
     if w.tell() < max_size / 2:
@@ -94,7 +108,15 @@ def write_data_main(filename, data):
         return word, outfile, data, False
 
 def write_data_residuals(outfile, next_words, words_index):
-    w = open(outfile, 'a')
+    while True:
+        try:
+            w = open(outfile, 'a')
+            break
+        except IOError, e:
+            print e.errno
+            time.sleep(2)
+
+
     top_words = next_words.most_common(10)
     for top_word, _ in top_words:
         hash32 = hashutils.hashword32int(top_word)
