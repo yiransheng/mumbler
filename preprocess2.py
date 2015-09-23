@@ -112,7 +112,7 @@ def write_data_residuals(outfile, next_words, words_index):
     w.close()
 
 def extract_parent_word(index, starting_pos, chunk_size):
-    datafile = os.path.join(GPFS_STORAGE, "gram2_%s.processed" % str(dataindex))
+    datafile = os.path.join(GPFS_STORAGE, "gram2_%s.processed" % str(index))
     with open(datafile, 'r') as df:
         df.seek(starting)
         lines = df.read(chunk_size).split("\n")
