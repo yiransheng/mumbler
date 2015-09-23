@@ -35,7 +35,7 @@ def process():
         print("Wrote into file up to %s" % tail_file)
         if has_space:
             print("we have space add more stuff")
-            next_words = search_next(tail_word, words_index)
+            next_words, _ = search_next(tail_word, words_index)
             write_data_residuals(tail_file, next_words, words_index)
 
 
@@ -74,7 +74,8 @@ def write_data_main(filename, data):
         for child_word in data[word]["children"]:
             child_count = data[word]["children"]["child_word"]
         # word TAB count NEW_LINE
-            w.write("%s\t%s\n" % (child_word, str(child_count)))
+            if child_count > 0:
+                w.write("%s\t%s\n" % (child_word, str(child_count)))
 
         if w.tell() >= max_size:
             w.close()
@@ -104,7 +105,8 @@ def write_data_residuals(outfile, next_words, words_index):
             for child_word in data[word]["children"]:
                 child_count = data[word]["children"]["child_word"]
             # word TAB count NEW_LINE
-                w.write("%s\t%s\n" % (child_word, str(child_count)))
+                if child_count > 0:
+                    w.write("%s\t%s\n" % (child_word, str(child_count)))
 
         if w.tell() >= max_size:
             break
