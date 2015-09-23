@@ -36,7 +36,7 @@ def process():
         if has_space:
             print("we have space add more stuff")
             next_words = search_next(tail_word, words_index)
-            write_data_residuals(tail_file, next_words, words_index):
+            write_data_residuals(tail_file, next_words, words_index)
 
 
 def load_hash32(hash32, words_index):
