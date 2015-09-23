@@ -26,8 +26,11 @@ def build_master_index(where):
                      index_entry.chunk_size)
                 )
 
-    with open(where, 'w') as w:
-        pickle.dump(master_index, w)
+    print("writing index file to disk")
+    w = open(where, 'w')
+    pickle.dump(master_index, w)
+    w.close()
+
     print("done")
 
 if __name__ == "__main__":
