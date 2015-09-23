@@ -71,7 +71,7 @@ def write_data_main(filename, data):
     for word in data:
         # SPACE word TAB counts NEW_LINE
         w.write(" %s\t%s\n" % word, str(data[word]["counts"]))
-        for child_word in data[word]["children"]
+        for child_word in data[word]["children"]:
             child_count = data[word]["children"]["child_word"]
         # word TAB count NEW_LINE
             w.write("%s\t%s\n" % child_word, str(child_count))
@@ -101,7 +101,7 @@ def write_data_residuals(outfile, next_words, words_index):
         for word in data:
             # SPACE word TAB counts NEW_LINE
             w.write(" %s\t%s\n" % word, str(data[word]["counts"]))
-            for child_word in data[word]["children"]
+            for child_word in data[word]["children"]:
                 child_count = data[word]["children"]["child_word"]
             # word TAB count NEW_LINE
                 w.write("%s\t%s\n" % child_word, str(child_count))
