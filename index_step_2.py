@@ -18,15 +18,16 @@ def build_master_index(cache=False):
                 if chunk == '':
                     break
                 index_entry = IndexEntry.unpack(chunk)
-                if index_entry.id not in master_index:
-                    master_index[index_entry.id] = []
+                strid = str(index_entry.id)
+                if strid not in master_index:
+                    master_index[strid] = []
 
                 index_content = (index_entry.index,
                      index_entry.offset,
                      index_entry.chunk_size)
-                master_index[index_entry.id].append(index_content)
+                master_index[strid].append(index_content)
                 if cache:
-                    memcached.set(str(index_entry.id), index_content)
+                    memcached.set(strid, index_content)
 
     print("done")
     return master_index

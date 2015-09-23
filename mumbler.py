@@ -2,12 +2,17 @@ import sys
 import random
 
 import search
+from index_step_2 import build_master_index
+from memcahce import memcached
+
+words_index = build_master_index()
+
 
 def mumbler(word, depth):
     if depth < 1:
         return word
 
-    next_words, next_words_count = search.search_next(word)
+    next_words, next_words_count = search.search_next(word, words_index)
     if next_words_count == 0:
         return word
 
