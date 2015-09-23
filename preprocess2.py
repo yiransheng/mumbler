@@ -22,7 +22,7 @@ def process():
     print("Processing hash by hash...")
     for hash32 in words_index:
         n += 1
-        if n % nnode != offset:
+        if n % nnodes != offset:
             continue
 
         data = load_hash32(hash32, words_index)
