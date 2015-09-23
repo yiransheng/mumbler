@@ -96,7 +96,7 @@ def write_data_main(filename, data):
 def write_data_residuals(outfile, next_words, words_index):
     w = open(outfile, 'a')
     top_words = next_words.most_common(10)
-    for top_word in top_words:
+    for top_word, _ in top_words:
         hash32 = hashutils.hashword32int(top_word)
         data =  load_hash32(hash32, words_index)
         for word in data:
