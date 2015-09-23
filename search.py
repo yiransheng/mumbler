@@ -6,17 +6,7 @@ from collections import Counter
 
 import nodeconfig
 
-from parse import extract_next_words
-
-def load_index_from_file(index_file="gram2_index"):
-    index_file = os.path.join(nodeconfig.GPFS_STORAGE, index_file)
-    print("Loading gram2 index file into RAM...")
-    with open(index_file, 'r') as f:
-        master_index = pickle.load(f)
-
-    print("done")
-    return master_index
-
+from parse import extract_next_words_fast
 
 def search_next(word, words_index):
     counter = Counter()
