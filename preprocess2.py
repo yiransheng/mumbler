@@ -31,6 +31,7 @@ def localprint(*args):
         log.write( str(args) )
 
 def process():
+    localprint("Starting up...")
     offset = localnode.index_offset
     nnodes = len( localnode.nodes() )
     words_index = build_master_index()
