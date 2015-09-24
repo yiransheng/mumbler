@@ -73,8 +73,12 @@ def write_data_main(filename, data):
                            filename + "." + str(file_index))
 
     while True:
+        if os.path.isfile(outfile):
+            mode = 'a'
+        else:
+            mode = 'w'
         try:
-            w = open(outfile, 'a')
+            w = open(outfile, mode)
             break
         except IOError, e:
             print e.errno
@@ -95,8 +99,12 @@ def write_data_main(filename, data):
                                    base_dir,
                                    filename + "." + str(file_index))
             while True:
+                if os.path.isfile(outfile):
+                    mode = 'a'
+                else:
+                    mode = 'w'
                 try:
-                    w = open(outfile, 'a')
+                    w = open(outfile, mode)
                     break
                 except IOError, e:
                     print e.errno
