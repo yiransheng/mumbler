@@ -22,23 +22,15 @@ if not os.path.exists(base_dir):
     os.makedirs(base_dir)
 
 islocal = masternode.name == localnode.name
-log = open("preprocess2.log", 'a')
-
-def localprint(*args):
-    if islocal:
-        print(args)
-    else:
-        log.write( str(args) )
-        log.write('\n')
 
 def process():
-    localprint("Starting up...")
+    print("Starting up...")
     offset = localnode.index_offset
     nnodes = len( localnode.nodes() )
     words_index = build_master_index()
     n = -1
     new_index = dict()
-    localprint("Processing hash by hash...")
+    print("Processing hash by hash...")
     for hash32 in words_index:
         n += 1
         if n % nnodes != offset:
@@ -48,7 +40,7 @@ def process():
         if len(data) == 0:
             continue
         first_word = data.iterkeys().next()
-        localprint("Handling word %s" % first_word)
+        print("Handling word %s" % first_word)
         # hex decimal
         it = gen_filenames()
         outfile = it.next()
@@ -60,9 +52,9 @@ def process():
               "chunk_size" : end_pos - start_pos
             }
             if not has_space:
-                localprint("%s is full" % outfile)
+                print("%s is full" % outfile)
                 outfile = it.next()
-                localprint("moving on to %s" % outfile)
+                print("moving on to %s" % outfile)
 
     return new_index
 
@@ -90,7 +82,7 @@ def load_hash32(hash32, words_index):
     if locs is None:
         return data
 
-    localprint("reading %s data files" % str(len(locs)))
+    print("reading %s data files" % str(len(locs)))
 
     for index, starting_pos, chunk_size in locs:
         word = extract_parent_word(index, starting_pos, chunk_size)
@@ -121,7 +113,7 @@ def write_data_main(filename, word, data):
             w = open(outfile, mode)
             break
         except IOError, e:
-            localprint(e.errno)
+            print(e.errno)
             time.sleep(2)
 
     start = w.tell()
@@ -129,7 +121,7 @@ def write_data_main(filename, word, data):
     w.write(" %s\t%s\n" % (word, str(data["counts"])))
     for child in data["children"]:
         for child_word, child_count in child.iteritems():
-            localprint(child_word, child_count)
+            print(child_word, child_count)
         # word TAB count NEW_LINE
             if child_count > 0:
                 w.write("%s\t%s\n" % (child_word, str(child_count)))
@@ -157,31 +149,9 @@ def extract_parent_word(index, starting, chunk_size):
     return parent_word
 
 if __name__ == "__main__":
-    if masternode.name == localnode.name:
-        script_path = os.path.realpath(__file__)
-        processes = []
-        for node in masternode.remotes():
-            _dir, _file = os.path.split(script_path)
-            args = ['ssh', node, script_path]
-            processes.append(subprocess.Popen(args, stdout=subprocess.PIPE, stderr=open(os.devnull, 'w')))
-
-        new_index = process()
-        for proc in processes:
-            remote_index = json.load(proc.stdout)
-            for k, v in remote_index.iteritems():
-                new_index[k] = v
-
-        localprint("done, now saving index..")
-        with open(os.path.join(GPFS_STORAGE, "master_index"), 'w') as w:
-            w.write(json.dumps(new_index))
-
-        for k, v in new_index.iteritems():
-            memcached.set(k, v)
-
-    else:
-        new_index = process()
-        sys.stdout.write(json.dumps(new_index))
-        log.close()
+    new_index = process()
+    with open(os.path.join(GPFS_STORAGE, "master_index_%s" % localnode.name), 'w') as w:
+        w.write(json.dumps(new_index))
 
 
 
