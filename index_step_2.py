@@ -3,7 +3,7 @@ import os
 import pickle
 try:
     from memcache import memcached
-except ImportError::
+except ImportError:
     pass
 
 from binindex import IndexEntry
