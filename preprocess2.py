@@ -1,7 +1,12 @@
 import os
+import sys
+import json
+
+import subprocess
+import pipes
 
 import hashutils
-from nodeconfig import localnode, GPFS_STORAGE
+from nodeconfig import masternode, localnode, GPFS_STORAGE
 from index_step_2 import build_master_index
 from parse import is_parent_line, parse_parent_line, extract_next_words_fast
 from search import search_next
@@ -19,6 +24,7 @@ def process():
     nnodes = len( localnode.nodes() )
     words_index = build_master_index()
     n = -1
+    new_index = dict()
     print("Processing hash by hash...")
     for hash32 in words_index:
         n += 1
@@ -30,13 +36,33 @@ def process():
             continue
         first_word = data.iterkeys().next()
         print("Handling word %s" % first_word)
-        hash16 = hashutils.hashword16(first_word)
-        tail_word, tail_file, data, has_space = write_data_main(hash16, data)
-        print("Wrote into file up to %s" % tail_file)
-        if has_space:
-            print("we have space add more stuff")
-            next_words, _ = search_next(tail_word, words_index)
-            write_data_residuals(tail_file, next_words, words_index)
+        # hex decimal
+        it = gen_filenames()
+        outfile = it.next()
+        for word, content in data.iteritems():
+            start_pos, end_pos, has_space = write_data_main(outfile, word, content)
+            new_index[word] = {
+              "start" : start_pos,
+              "chunk_size" : end_pos - start_pos
+            }
+            if not has_space:
+                print("%s is full" % outfile)
+                outfile = it.next()
+                print("moving on to %s" % outfile)
+
+    return new_index
+
+
+def gen_filenames():
+    node_id = localnode.index_offset
+    index = 0
+    done = False
+    while not done:
+        # fixed width hex decimal format of file index with leading node id (0,1,2)
+        yield outfile = "%d%0.5X" % (node_id, index)
+        index +=1
+
+
 
 
 def load_hash32(hash32, words_index):
@@ -65,12 +91,11 @@ def load_hash32(hash32, words_index):
     return data
 
 
-def write_data_main(filename, data):
+def write_data_main(filename, word, data):
 
-    file_index = 0
     outfile = os.path.join(GPFS_STORAGE,
                            base_dir,
-                           filename + "." + str(file_index))
+                           filename)
 
     while True:
         if os.path.isfile(outfile):
@@ -83,68 +108,25 @@ def write_data_main(filename, data):
         except IOError, e:
             print e.errno
             time.sleep(2)
-    for word, content in data.iteritems():
-        # SPACE word TAB counts NEW_LINE
-        w.write(" %s\t%s\n" % (word, str(data[word]["counts"])))
-        for child in content["children"]:
-            for child_word, child_count in child.iteritems():
-                print(child_word, child_count)
-            # word TAB count NEW_LINE
-                if child_count > 0:
-                    w.write("%s\t%s\n" % (child_word, str(child_count)))
 
-        if w.tell() >= max_size:
-            w.close()
-            file_index += 1
-            outfile = os.path.join(GPFS_STORAGE,
-                                   base_dir,
-                                   filename + "." + str(file_index))
-            while True:
-                if os.path.isfile(outfile):
-                    mode = 'a'
-                else:
-                    mode = 'w'
-                try:
-                    w = open(outfile, mode)
-                    break
-                except IOError, e:
-                    print e.errno
-                    time.sleep(2)
+    start = w.tell()
+    # SPACE word TAB counts NEW_LINE
+    w.write(" %s\t%s\n" % (word, str(data["counts"])))
+    for child in data["children"]:
+        for child_word, child_count in child.iteritems():
+            print(child_word, child_count)
+        # word TAB count NEW_LINE
+            if child_count > 0:
+                w.write("%s\t%s\n" % (child_word, str(child_count)))
 
+    end = w.tell()
     # file is not full, we can write some more stuff in
-    if w.tell() < max_size / 2:
+    if w.tell() < max_size:
         w.close()
-        return word, outfile, data, True
+        return start, end, True
     else:
         w.close()
-        return word, outfile, data, False
-
-def write_data_residuals(outfile, next_words, words_index):
-    while True:
-        try:
-            w = open(outfile, 'a')
-            break
-        except IOError, e:
-            print e.errno
-            time.sleep(2)
-
-
-    top_words = next_words.most_common(10)
-    for top_word, _ in top_words:
-        hash32 = hashutils.hashword32int(top_word)
-        data =  load_hash32(hash32, words_index)
-        for word, content in data.iteritems():
-            w.write(" %s\t%s\n" % (word, str(content["counts"])))
-            for child in content["children"]:
-                for child_word, child_count in child.iteritems():
-                # word TAB count NEW_LINE
-                    if child_count > 0:
-                        w.write("%s\t%s\n" % (child_word, str(child_count)))
-
-        if w.tell() >= max_size:
-            break
-
-    w.close()
+        return start, end, False
 
 def extract_parent_word(index, starting, chunk_size):
     datafile = os.path.join(GPFS_STORAGE, "gram2_%s.processed" % str(index))
@@ -159,17 +141,30 @@ def extract_parent_word(index, starting, chunk_size):
     parent_word, _, counts = parse_parent_line(lines[0])
     return parent_word
 
-def merge_counters(counter1, counter2):
-    for word in counter2:
-        if counter2[word] > 0:
-            if word not in counter1:
-                counter1[word] = counter2[word]
-            else:
-                counter1[word] += counter2[word]
-
-    return counter1
-
 if __name__ == "__main__":
-    process()
+    if masternode.name == localnode.name:
+        script_path = os.path.realpath(__file__)
+        processes = []
+        for node in masternode.remotes():
+            args = ['ssh', node, 'python', script_path]
+            processes.append(subprocess.Popen(args, stdout=subprocess.PIPE))
+
+        new_index = process()
+        for proc in processes:
+            remote_index = json.load(proc.stdout)
+            for k, v in remote_index.iteritems():
+                new_index[k] = v
+
+        print("done, now saving index..")
+        with open(os.path.join(GPFS_STORAGE, "master_index"), 'w') as w:
+            w.write(json.dumps(new_index))
+
+        for k, v in new_index.iteritems():
+            memcached.set(k, v)
+
+    else:
+        new_index = process()
+        sys.stdout.write(json.dumps(new_index))
+
 
 

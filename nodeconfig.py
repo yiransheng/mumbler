@@ -6,8 +6,8 @@ class GPFSNode(object):
     LOCAL_STORAGE = "/root/tmp/2gram"
     GPFS_STORAGE = "/gpfs/gpfsfpo"
 
-    def __init__(self, node_file="/root/nodefile"):
-        self.name = socket.gethostname().split('.')[0]
+    def __init__(self, node_file="/root/nodefile", name=socket.gethostname().split('.')[0]):
+        self.name = name
         self._node_file = node_file
         self.__load_node_file()
 
@@ -41,6 +41,12 @@ class GPFSNode(object):
     def nodes(self):
         return list(self._nodes)
 
+    def remotes(self):
+        remotes = self.nodes()
+        remotes.remove(self.name)
+        return remotes
+
 localnode = GPFSNode()
+masternode = GPFSNode(name="gpfs2")
 LOCAL_STORAGE = GPFSNode.LOCAL_STORAGE
 GPFS_STORAGE = GPFSNode.GPFS_STORAGE
