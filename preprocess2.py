@@ -58,9 +58,9 @@ def load_hash32(hash32, words_index):
         child_words, counts = extract_next_words_fast(word, index, starting_pos, chunk_size)
         if word in data:
             data[word]["counts"] += counts
-            merge_counters(data[word]["children"], child_words)
+            data[word]["children"].append(child_words)
         else:
-            data[word] = { "counts": counts, "children": child_words }
+            data[word] = { "counts": counts, "children": [child_words] }
 
     return data
 
@@ -83,15 +83,15 @@ def write_data_main(filename, data):
         except IOError, e:
             print e.errno
             time.sleep(2)
-    for word in data:
+    for word, content in data:
         # SPACE word TAB counts NEW_LINE
         w.write(" %s\t%s\n" % (word, str(data[word]["counts"])))
-        for child_word in data[word]["children"]:
-            child_count = data[word]["children"]["child_word"]
-            print(child_word, child_count)
-        # word TAB count NEW_LINE
-            if child_count > 0:
-                w.write("%s\t%s\n" % (child_word, str(child_count)))
+        for child in content["children"]:
+            for child_word, child_count in child:
+                print(child_word, child_count)
+            # word TAB count NEW_LINE
+                if child_count > 0:
+                    w.write("%s\t%s\n" % (child_word, str(child_count)))
 
         if w.tell() >= max_size:
             w.close()
@@ -133,14 +133,12 @@ def write_data_residuals(outfile, next_words, words_index):
     for top_word, _ in top_words:
         hash32 = hashutils.hashword32int(top_word)
         data =  load_hash32(hash32, words_index)
-        for word in data:
-            # SPACE word TAB counts NEW_LINE
-            w.write(" %s\t%s\n" % (word, str(data[word]["counts"])))
-            for child_word in data[word]["children"]:
-                child_count = data[word]["children"]["child_word"]
-            # word TAB count NEW_LINE
-                if child_count > 0:
-                    w.write("%s\t%s\n" % (child_word, str(child_count)))
+        for word, content in data:
+            for child in content["children"]:
+                for child_word, child_count in child:
+                # word TAB count NEW_LINE
+                    if child_count > 0:
+                        w.write("%s\t%s\n" % (child_word, str(child_count)))
 
         if w.tell() >= max_size:
             break
