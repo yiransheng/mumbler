@@ -84,7 +84,8 @@ def gen_files():
         fl = open(outfile, 'a')
         done = yield (fl, filename)
 
-    fl.close()
+    if fl is not None:
+        fl.close()
 
 
 
