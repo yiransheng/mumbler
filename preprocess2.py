@@ -50,6 +50,7 @@ def process():
         for word, content in data.iteritems():
             start_pos, end_pos, has_space = write_data_main(outfile, word, content)
             new_index[word] = {
+              "nodeid" : str(offset),
               "start" : start_pos,
               "chunk_size" : end_pos - start_pos
             }
