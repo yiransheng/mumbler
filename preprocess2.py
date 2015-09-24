@@ -33,7 +33,7 @@ def process():
     new_index = dict()
     print("Processing hash by hash...")
     it = gen_files()
-    outfile = it.next()
+    outfile, outfile_name = it.next()
     for hash32 in words_index:
         n += 1
         if n % nnodes != offset:
@@ -48,14 +48,14 @@ def process():
         for word, content in data.iteritems():
             start_pos, end_pos, has_space = write_data_main(outfile, word, content)
             new_index[word] = {
-              "nodeid" : str(offset),
+              "file" : outfile_name,
               "start" : start_pos,
               "chunk_size" : end_pos - start_pos
             }
             print("Bytes: %d" % end_pos)
             if not has_space:
                 print("%s is full" % outfile)
-                outfile = it.next()
+                outfile, outfile_name = it.next()
                 print("moving on to %s" % outfile)
 
         try:
@@ -82,7 +82,7 @@ def gen_files():
             fl.close()
 
         fl = open(outfile, 'a')
-        done = yield fl
+        done = yield (fl, filename)
 
     fl.close()
 
