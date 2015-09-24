@@ -130,7 +130,7 @@ def write_data_main(file, word, data):
 
     end = w.tell()
     # file is not full, we can write some more stuff in
-    if w.tell() < max_size:
+    if end < max_size:
         return start, end, True
     else:
         return start, end, False
