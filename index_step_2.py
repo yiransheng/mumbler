@@ -13,7 +13,7 @@ def build_master_index(cache=False):
     master_index = dict()
     size = IndexEntry.size()
     for node in localnode.nodes():
-        print("Processing %s_index" % node)
+        # print("Processing %s_index" % node)
         node_index_file = os.path.join(GPFS_STORAGE, "%s_index" % node)
         with open(node_index_file, 'r') as f:
             while True:
@@ -30,7 +30,6 @@ def build_master_index(cache=False):
                      index_entry.chunk_size)
                 master_index[strid].append(index_content)
 
-    print("finished loading index")
     '''
     if cache:
         print("putting it to memcache")
