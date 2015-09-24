@@ -1,5 +1,6 @@
 import json
 from pymemcache.client.base import Client
+from nodeconfig import masternode, localnode
 
 def json_serializer(key, value):
     if type(value) == str:
@@ -13,7 +14,11 @@ def json_deserializer(key, value, flags):
         return json.loads(value)
     raise Exception("Unknown serialization format")
 
-memcached = Client(('localhost', 11211), serializer=json_serializer,
+if masternode.name == localnode.name:
+    host = 'localhost'
+else:
+    host = masternode.name
+memcached = Client((host, 11211), serializer=json_serializer,
                 deserializer=json_deserializer)
 
 
