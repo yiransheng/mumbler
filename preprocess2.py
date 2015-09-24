@@ -88,6 +88,7 @@ def write_data_main(filename, data):
         w.write(" %s\t%s\n" % (word, str(data[word]["counts"])))
         for child_word in data[word]["children"]:
             child_count = data[word]["children"]["child_word"]
+            print(child_word, child_count)
         # word TAB count NEW_LINE
             if child_count > 0:
                 w.write("%s\t%s\n" % (child_word, str(child_count)))
