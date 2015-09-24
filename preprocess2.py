@@ -26,6 +26,9 @@ islocal = masternode.name == localnode.name
 def localprint(*args):
     if islocal:
         print(args)
+    else:
+        with open('preprocess2.log', 'a') as log:
+            log.write( str(args) )
 
 def process():
     offset = localnode.index_offset
