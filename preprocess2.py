@@ -163,7 +163,7 @@ if __name__ == "__main__":
         for node in masternode.remotes():
             _dir, _file = os.path.split(script_path)
             args = ['ssh', node, script_path]
-            processes.append(subprocess.Popen(args, stdout=subprocess.PIPE))
+            processes.append(subprocess.Popen(args, stdout=subprocess.PIPE, stderr=open(os.devnull, 'w')))
 
         new_index = process()
         for proc in processes:
