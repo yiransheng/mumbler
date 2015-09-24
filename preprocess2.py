@@ -71,7 +71,7 @@ def gen_files():
     index = 0
     done = None
     fl = None
-    while done is not None:
+    while done is None:
         # fixed width hex decimal format of file index with leading node id (0,1,2)
         filename = "%d%0.8X" % (node_id, index)
         index +=1
