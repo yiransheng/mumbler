@@ -1,3 +1,5 @@
+#!/opt/rh/python27/root/usr/bin/python
+
 import os
 import sys
 import json
