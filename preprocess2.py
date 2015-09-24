@@ -78,7 +78,7 @@ def gen_files():
         outfile = os.path.join(GPFS_STORAGE,
                            base_dir,
                            filename)
-        if fl is no None:
+        if fl is not None:
             fl.close()
 
         fl = open(outfile, 'a')
