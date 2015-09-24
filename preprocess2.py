@@ -134,6 +134,7 @@ def write_data_residuals(outfile, next_words, words_index):
         hash32 = hashutils.hashword32int(top_word)
         data =  load_hash32(hash32, words_index)
         for word, content in data.iteritems():
+            w.write(" %s\t%s\n" % (word, str(content["counts"])))
             for child in content["children"]:
                 for child_word, child_count in child.iteritems():
                 # word TAB count NEW_LINE
