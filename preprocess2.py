@@ -150,7 +150,7 @@ if __name__ == "__main__":
         processes = []
         for node in masternode.remotes():
             _dir, _file = os.path.split(script_path)
-            args = ['ssh', node, "cd %s ; python %s" % (_dir, _file)]
+            args = ['ssh', node, "scl enable python27 bash; cd %s ; python %s" % (_dir, _file)]
             processes.append(subprocess.Popen(args, stdout=subprocess.PIPE))
 
         new_index = process()
