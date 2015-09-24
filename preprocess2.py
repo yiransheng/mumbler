@@ -66,7 +66,7 @@ def gen_filenames():
     done = False
     while not done:
         # fixed width hex decimal format of file index with leading node id (0,1,2)
-        outfile = "%d%0.5X" % (node_id, index)
+        outfile = "%d%0.8X" % (node_id, index)
         yield outfile
         index +=1
 
