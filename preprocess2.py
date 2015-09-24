@@ -16,7 +16,7 @@ from search import search_next
 
 from memcache import memcached
 
-max_size = 1048576 # 1MB
+max_size = 4194304 # 4MB
 base_dir = os.path.join(GPFS_STORAGE, "data")
 
 if not os.path.exists(base_dir):
@@ -52,23 +52,39 @@ def process():
               "start" : start_pos,
               "chunk_size" : end_pos - start_pos
             }
+            print("Bytes: %d" % end_pos)
             if not has_space:
                 print("%s is full" % outfile)
                 outfile = it.next()
                 print("moving on to %s" % outfile)
 
+        try:
+            it.send(True)
+        except StopIteration:
+            pass
+
     return new_index
 
 
-def gen_filenames():
+def gen_files():
     node_id = localnode.index_offset
     index = 0
     done = False
+    fl = None
     while not done:
         # fixed width hex decimal format of file index with leading node id (0,1,2)
-        outfile = "%d%0.8X" % (node_id, index)
-        yield outfile
+        filename = "%d%0.8X" % (node_id, index)
         index +=1
+        outfile = os.path.join(GPFS_STORAGE,
+                           base_dir,
+                           filename)
+        if fl is no None:
+            fl.close()
+
+        fl = open(outfile, 'a')
+        done = yield fl
+
+    fl.close()
 
 
 
@@ -99,24 +115,9 @@ def load_hash32(hash32, words_index):
     return data
 
 
-def write_data_main(filename, word, data):
+def write_data_main(file, word, data):
 
-    outfile = os.path.join(GPFS_STORAGE,
-                           base_dir,
-                           filename)
-
-    while True:
-        if os.path.isfile(outfile):
-            mode = 'a'
-        else:
-            mode = 'w'
-        try:
-            w = open(outfile, mode)
-            break
-        except IOError, e:
-            print(e.errno)
-            time.sleep(2)
-
+    w = file
     start = w.tell()
     # SPACE word TAB counts NEW_LINE
     w.write(" %s\t%s\n" % (word, str(data["counts"])))
@@ -130,10 +131,8 @@ def write_data_main(filename, word, data):
     end = w.tell()
     # file is not full, we can write some more stuff in
     if w.tell() < max_size:
-        w.close()
         return start, end, True
     else:
-        w.close()
         return start, end, False
 
 def extract_parent_word(index, starting, chunk_size):
