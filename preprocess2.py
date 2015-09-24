@@ -32,7 +32,7 @@ def process():
     n = -1
     new_index = dict()
     print("Processing hash by hash...")
-    it = gen_filenames()
+    it = gen_files()
     for hash32 in words_index:
         n += 1
         if n % nnodes != offset:
