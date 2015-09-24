@@ -29,6 +29,7 @@ def localprint(*args):
         print(args)
     else:
         log.write( str(args) )
+        log.write('\n')
 
 def process():
     localprint("Starting up...")
