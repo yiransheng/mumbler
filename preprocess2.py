@@ -23,9 +23,9 @@ if not os.path.exists(base_dir):
 
 islocal = masternode.name == localnode.name
 
-def localprint(x):
+def localprint(*args):
     if islocal:
-        print(x)
+        print(args)
 
 def process():
     offset = localnode.index_offset
