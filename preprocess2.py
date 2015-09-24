@@ -83,11 +83,11 @@ def write_data_main(filename, data):
         except IOError, e:
             print e.errno
             time.sleep(2)
-    for word, content in data:
+    for word, content in data.iteritems():
         # SPACE word TAB counts NEW_LINE
         w.write(" %s\t%s\n" % (word, str(data[word]["counts"])))
         for child in content["children"]:
-            for child_word, child_count in child:
+            for child_word, child_count in child.iteritems():
                 print(child_word, child_count)
             # word TAB count NEW_LINE
                 if child_count > 0:
@@ -133,9 +133,9 @@ def write_data_residuals(outfile, next_words, words_index):
     for top_word, _ in top_words:
         hash32 = hashutils.hashword32int(top_word)
         data =  load_hash32(hash32, words_index)
-        for word, content in data:
+        for word, content in data.iteritems():
             for child in content["children"]:
-                for child_word, child_count in child:
+                for child_word, child_count in child.iteritems():
                 # word TAB count NEW_LINE
                     if child_count > 0:
                         w.write("%s\t%s\n" % (child_word, str(child_count)))
