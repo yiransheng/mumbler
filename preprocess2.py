@@ -21,13 +21,19 @@ base_dir = os.path.join(GPFS_STORAGE, "data")
 if not os.path.exists(base_dir):
     os.makedirs(base_dir)
 
+islocal = masternode.name == localnode.name
+
+def localprint(x):
+    if islocal:
+        print(x)
+
 def process():
     offset = localnode.index_offset
     nnodes = len( localnode.nodes() )
     words_index = build_master_index()
     n = -1
     new_index = dict()
-    print("Processing hash by hash...")
+    localprint("Processing hash by hash...")
     for hash32 in words_index:
         n += 1
         if n % nnodes != offset:
@@ -37,7 +43,7 @@ def process():
         if len(data) == 0:
             continue
         first_word = data.iterkeys().next()
-        print("Handling word %s" % first_word)
+        localprint("Handling word %s" % first_word)
         # hex decimal
         it = gen_filenames()
         outfile = it.next()
@@ -48,9 +54,9 @@ def process():
               "chunk_size" : end_pos - start_pos
             }
             if not has_space:
-                print("%s is full" % outfile)
+                localprint("%s is full" % outfile)
                 outfile = it.next()
-                print("moving on to %s" % outfile)
+                localprint("moving on to %s" % outfile)
 
     return new_index
 
@@ -78,7 +84,7 @@ def load_hash32(hash32, words_index):
     if locs is None:
         return data
 
-    print("reading %s data files" % str(len(locs)))
+    localprint("reading %s data files" % str(len(locs)))
 
     for index, starting_pos, chunk_size in locs:
         word = extract_parent_word(index, starting_pos, chunk_size)
@@ -109,7 +115,7 @@ def write_data_main(filename, word, data):
             w = open(outfile, mode)
             break
         except IOError, e:
-            print e.errno
+            localprint e.errno
             time.sleep(2)
 
     start = w.tell()
@@ -117,7 +123,7 @@ def write_data_main(filename, word, data):
     w.write(" %s\t%s\n" % (word, str(data["counts"])))
     for child in data["children"]:
         for child_word, child_count in child.iteritems():
-            print(child_word, child_count)
+            localprint(child_word, child_count)
         # word TAB count NEW_LINE
             if child_count > 0:
                 w.write("%s\t%s\n" % (child_word, str(child_count)))
@@ -159,7 +165,7 @@ if __name__ == "__main__":
             for k, v in remote_index.iteritems():
                 new_index[k] = v
 
-        print("done, now saving index..")
+        localprint("done, now saving index..")
         with open(os.path.join(GPFS_STORAGE, "master_index"), 'w') as w:
             w.write(json.dumps(new_index))
 
