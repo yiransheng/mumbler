@@ -22,13 +22,13 @@ if not os.path.exists(base_dir):
     os.makedirs(base_dir)
 
 islocal = masternode.name == localnode.name
+log = open("preprocess2.log", 'a')
 
 def localprint(*args):
     if islocal:
         print(args)
     else:
-        with open('preprocess2.log', 'a') as log:
-            log.write( str(args) )
+        log.write( str(args) )
 
 def process():
     offset = localnode.index_offset
@@ -179,6 +179,7 @@ if __name__ == "__main__":
     else:
         new_index = process()
         sys.stdout.write(json.dumps(new_index))
+        log.close()
 
 
 
