@@ -31,6 +31,7 @@ def process():
     n = -1
     new_index = dict()
     print("Processing hash by hash...")
+    it = gen_filenames()
     for hash32 in words_index:
         n += 1
         if n % nnodes != offset:
@@ -42,7 +43,6 @@ def process():
         first_word = data.iterkeys().next()
         print("Handling word %s" % first_word)
         # hex decimal
-        it = gen_filenames()
         outfile = it.next()
         for word, content in data.iteritems():
             start_pos, end_pos, has_space = write_data_main(outfile, word, content)
