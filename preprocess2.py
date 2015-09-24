@@ -33,6 +33,7 @@ def process():
     new_index = dict()
     print("Processing hash by hash...")
     it = gen_files()
+    outfile = it.next()
     for hash32 in words_index:
         n += 1
         if n % nnodes != offset:
@@ -44,7 +45,6 @@ def process():
         first_word = data.iterkeys().next()
         print("Handling word %s" % first_word)
         # hex decimal
-        outfile = it.next()
         for word, content in data.iteritems():
             start_pos, end_pos, has_space = write_data_main(outfile, word, content)
             new_index[word] = {
@@ -69,9 +69,9 @@ def process():
 def gen_files():
     node_id = localnode.index_offset
     index = 0
-    done = False
+    done = None
     fl = None
-    while done != True:
+    while done is not None:
         # fixed width hex decimal format of file index with leading node id (0,1,2)
         filename = "%d%0.8X" % (node_id, index)
         index +=1
