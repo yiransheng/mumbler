@@ -115,7 +115,7 @@ def write_data_main(filename, word, data):
             w = open(outfile, mode)
             break
         except IOError, e:
-            localprint e.errno
+            localprint(e.errno)
             time.sleep(2)
 
     start = w.tell()
