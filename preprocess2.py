@@ -42,10 +42,9 @@ def process():
         data = load_hash32(hash32, words_index)
         if len(data) == 0:
             continue
-        first_word = data.iterkeys().next()
-        print("Handling word %s" % first_word)
         # hex decimal
         for word, content in data.iteritems():
+            print("writing data for: %s" % word)
             start_pos, end_pos, has_space = write_data_main(outfile, word, content)
             new_index[word] = {
               "file" : outfile_name,
@@ -55,13 +54,10 @@ def process():
             print("Bytes: %d" % end_pos)
             if not has_space:
                 print("%s is full" % outfile)
-                outfile, outfile_name = it.next()
+                outfile, outfile_name = it.send(outfile)
                 print("moving on to %s" % outfile)
 
-        try:
-            it.send(True)
-        except StopIteration:
-            pass
+    it.send(outfile)
 
     return new_index
 
@@ -69,23 +65,20 @@ def process():
 def gen_files():
     node_id = localnode.index_offset
     index = 0
-    done = None
-    fl = None
-    while done is None:
+    _file = None
+    while True:
         # fixed width hex decimal format of file index with leading node id (0,1,2)
         filename = "%d%0.8X" % (node_id, index)
-        index +=1
         outfile = os.path.join(GPFS_STORAGE,
                            base_dir,
                            filename)
-        if fl is not None:
-            fl.close()
 
-        fl = open(outfile, 'a')
-        done = yield (fl, filename)
+        index +=1
+        _prev_file = yield (open(filename, 'a'), filename)
+        if _prev_file is not None:
+            _prev_file.close()
 
-    if fl is not None:
-        fl.close()
+
 
 
 
