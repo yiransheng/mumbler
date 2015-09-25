@@ -74,7 +74,7 @@ def gen_files():
                            filename)
 
         index +=1
-        _prev_file = yield (open(filename, 'a'), filename)
+        _prev_file = yield (open(outfile, 'a'), filename)
         if _prev_file is not None:
             _prev_file.close()
 
